@@ -18,10 +18,10 @@ function create_database_and_schema {
     CREATE DATABASE tpch;
     \c tpch;
     CREATE TABLE lineitem (
-        l_orderkey    INTEGER NOT NULL,
-        l_partkey     INTEGER NOT NULL,
-        l_suppkey     INTEGER NOT NULL,
-        l_linenumber  INTEGER NOT NULL,
+        l_orderkey    BIGINT NOT NULL,
+        l_partkey     BIGINT NOT NULL,
+        l_suppkey     BIGINT NOT NULL,
+        l_linenumber  BIGINT NOT NULL,
         l_quantity    DECIMAL(15,2) NOT NULL,
         l_extendedprice  DECIMAL(15,2) NOT NULL,
         l_discount    DECIMAL(15,2) NOT NULL,
@@ -37,11 +37,12 @@ function create_database_and_schema {
     ) DISTRIBUTED BY (l_partkey);
 EOF
     psql -c "CREATE EXTERNAL TABLE lineitem_external (like lineitem) LOCATION ('pxf://tmp/lineitem_read/?PROFILE=HdfsTextSimple') FORMAT 'CSV' (DELIMITER '|')"
-    psql -c "CREATE OR REPLACE FUNCTION write_to_s3() RETURNS integer AS '\$libdir/gps3ext.so', 's3_export' LANGUAGE C STABLE"
-    psql -c "CREATE OR REPLACE FUNCTION read_from_s3() RETURNS integer AS '\$libdir/gps3ext.so', 's3_import' LANGUAGE C STABLE"
-    psql -c "CREATE PROTOCOL s3 (writefunc = write_to_s3, readfunc = read_from_s3)"
+    if [ "${BENCHMARK_S3}" == "true" ]; then
+        psql -c "CREATE OR REPLACE FUNCTION write_to_s3() RETURNS integer AS '\$libdir/gps3ext.so', 's3_export' LANGUAGE C STABLE"
+        psql -c "CREATE OR REPLACE FUNCTION read_from_s3() RETURNS integer AS '\$libdir/gps3ext.so', 's3_import' LANGUAGE C STABLE"
+        psql -c "CREATE PROTOCOL s3 (writefunc = write_to_s3, readfunc = read_from_s3)"
 
-    cat > /tmp/s3.conf <<-EOF
+        cat > /tmp/s3.conf <<-EOF
 [default]
 accessid = "${AWS_ACCESS_KEY_ID}"
 secret = "${AWS_SECRET_ACCESS_KEY}"
@@ -58,18 +59,15 @@ server_side_encryption = ""
 # gpcheckcloud config
 gpcheckcloud_newline = "\n"
 EOF
-    cat cluster_env_files/etc_hostfile | grep sdw | cut -d ' ' -f 2 > /tmp/segment_hosts
-    gpssh -u gpadmin -f /tmp/segment_hosts -v -s -e 'mkdir ~/s3/'
-    gpscp -u gpadmin -f /tmp/segment_hosts /tmp/s3.conf =:~/s3/s3.conf
+        cat cluster_env_files/etc_hostfile | grep sdw | cut -d ' ' -f 2 > /tmp/segment_hosts
+        gpssh -u gpadmin -f /tmp/segment_hosts -v -s -e 'mkdir ~/s3/'
+        gpscp -u gpadmin -f /tmp/segment_hosts /tmp/s3.conf =:~/s3/s3.conf
+    fi
 }
 
 function download_jar_dependencies {
     mkdir pxf-jars
     pushd pxf-jars
-#        wget http://central.maven.org/maven2/com/amazonaws/aws-java-sdk-core/1.11.406/aws-java-sdk-core-1.11.406.jar
-#        wget http://central.maven.org/maven2/com/amazonaws/aws-java-sdk-kms/1.11.406/aws-java-sdk-kms-1.11.406.jar
-#        wget http://central.maven.org/maven2/com/amazonaws/aws-java-sdk-s3/1.11.406/aws-java-sdk-s3-1.11.406.jar
-#        wget http://central.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.8.2/hadoop-aws-2.8.2.jar
         wget http://central.maven.org/maven2/com/amazonaws/aws-java-sdk-core/1.11.416/aws-java-sdk-core-1.11.416.jar
         wget http://central.maven.org/maven2/com/amazonaws/aws-java-sdk-kms/1.11.416/aws-java-sdk-kms-1.11.416.jar
         wget http://central.maven.org/maven2/com/amazonaws/aws-java-sdk-s3/1.11.416/aws-java-sdk-s3-1.11.416.jar
@@ -252,9 +250,9 @@ EOF
 
 function create_s3_extension_external_tables {
     psql -c "CREATE EXTERNAL TABLE lineitem_s3_c (like lineitem)
-        location('s3://s3.us-west-2.amazonaws.com/gpdb-ud-scratch/s3-profile-test/lineitem/10/ config=/home/gpadmin/s3/s3.conf') FORMAT 'CSV' (DELIMITER '|')"
+        location('s3://s3.us-west-2.amazonaws.com/gpdb-ud-scratch/s3-profile-test/lineitem/${SCALE}/ config=/home/gpadmin/s3/s3.conf') FORMAT 'CSV' (DELIMITER '|')"
     psql -c "CREATE EXTERNAL TABLE lineitem_s3_pxf (like lineitem)
-        location('pxf://s3-profile-test/lineitem/10/?PROFILE=HdfsTextSimple') format 'CSV' (DELIMITER '|');"
+        location('pxf://s3-profile-test/lineitem/${SCALE}/?PROFILE=HdfsTextSimple') format 'CSV' (DELIMITER '|');"
 
     psql -c "CREATE WRITABLE EXTERNAL TABLE lineitem_s3_c_write (like lineitem)
         LOCATION('s3://s3.us-west-2.amazonaws.com/gpdb-ud-scratch/s3-profile-test/output/ config=/home/gpadmin/s3/s3.conf') FORMAT 'CSV'"
@@ -368,7 +366,9 @@ function main {
     echo -e "Data loading and validation complete\n"
     LINEITEM_COUNT=$(psql -t -c "SELECT COUNT(*) FROM lineitem" | tr -d ' ')
 
-    run_s3_extension_benchmark
+    if [ "${BENCHMARK_S3}" == "true" ]; then
+        run_s3_extension_benchmark
+    fi
 
     if [ "${BENCHMARK_GPHDFS}" == "true" ]; then
         run_gphdfs_benchmark

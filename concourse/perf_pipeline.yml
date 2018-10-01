@@ -249,6 +249,7 @@ jobs:
             segments_per_host: {{perf-gpdb-segments-per-host}}
             instance_type: {{perf-gpdb-instance-type}}
             ccp_reap_minutes: {{perf-ccp-reap-minutes}}
+            disk_size: {{perf-gpdb-disk-size}}
       - task: gen_gpdb_cluster
         input_mapping:
           terraform: terraform_gpdb
@@ -262,7 +263,25 @@ jobs:
           BUCKET_NAME: {{tf-bucket-name}}
           PLATFORM: centos7
           CLOUD_PROVIDER: google
+      - task: customize_greenplum
+        config:
+          platform: linux
+          inputs:
+          - name: ccp_src
+          - name: pxf_src
+          outputs:
+          - name: ccp_custom_src
+          run:
+            path: bash
+            args:
+            - -c
+            - cp -R ccp_src ccp_custom_src
+            - cp pxf_src/concourse/scripts/gpdb/gpinitsystem_config ccp_custom_src/scripts/gpinitsystem_config
+            - sed -i '/run_gpinitsystem_inspec/d' ccp_custom_src/scripts/gpinitsystem.sh
+          image: ccp-7
       - task: intialize_greenplum
+        input_mapping:
+          ccp_src: ccp_custom_src
         file: ccp_src/ci/tasks/gpinitsystem.yml
 
     - do:
@@ -282,6 +301,8 @@ jobs:
             internal_ip_only: "false"
             ccp_reap_minutes: {{perf-ccp-reap-minutes}}
             initialization_script: {{perf-hadoop-initialization-script}}
+            initialization_script_timeout: {{perf-hadoop-initialization-script-timeout}}
+            disk_size: {{perf-hadoop-disk-size}}
 
   - task: setup_pxf
     input_mapping:
@@ -306,7 +327,9 @@ jobs:
     image: gpdb-pxf-dev-centos6-hdp-server
     file: pxf_src/concourse/tasks/pxf-perf-multi-node.yml
     params:
-      BENCHMARK_GPHDFS: true
+      SCALE: {{perf-scale}}
+      BENCHMARK_S3: {{perf-benchmark-s3}}
+      BENCHMARK_GPHDFS: {{perf-benchmark-gphdfs}}
       AWS_ACCESS_KEY_ID: {{tf-machine-access-key-id}}
       AWS_SECRET_ACCESS_KEY: {{tf-machine-secret-access-key}}
       AWS_DEFAULT_REGION: {{aws-region}}
