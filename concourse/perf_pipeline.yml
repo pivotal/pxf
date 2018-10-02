@@ -312,16 +312,17 @@ jobs:
           platform: linux
           inputs:
           - name: pxf_src
+          - name: terraform_dataproc
           run:
             path: pxf_src/concourse/scripts/load_data.bash
-        params:
-          GOOGLE_CREDENTIALS: {{google-service-account-key}}
-          GOOGLE_PROJECT_ID: {{google-project-id}}
-          GOOGLE_ZONE: {{google-zone}}
-          GOOGLE_SERVICE_ACCOUNT: {{google-service-account}}
-          PLATFORM: centos7
-          CLOUD_PROVIDER: google
-          SCALE: {{perf-scale}}
+          params:
+            GOOGLE_CREDENTIALS: {{google-service-account-key}}
+            GOOGLE_PROJECT_ID: {{google-project-id}}
+            GOOGLE_ZONE: {{google-zone}}
+            GOOGLE_SERVICE_ACCOUNT: {{google-service-account}}
+            PLATFORM: centos7
+            CLOUD_PROVIDER: google
+            SCALE: {{perf-scale}}
 
   - task: setup_pxf
     input_mapping:
