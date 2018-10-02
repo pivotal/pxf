@@ -15,5 +15,6 @@ echo -e "Y\n\n\n" | gcloud compute --project "data-gpdb-ud" ssh \
   --force-key-file-overwrite --zone "us-central1-a" ccp-ci-service@${HADOOP_HOSTNAME} \
   --command "hadoop distcp gs://data-gpdb-ud-tpch/${SCALE}/lineitem_data/*.tbl /tmp/lineitem_read/"
 
-ssh -t -i ~/.ssh/google_compute_engine ccp-ci-service@${HADOOP_HOSTNAME} \
-  "hadoop distcp gs://data-gpdb-ud-tpch/${SCALE}/lineitem_data/*.tbl /tmp/lineitem_read/"
+ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
+  -t -i ~/.ssh/google_compute_engine ccp-ci-service@${HADOOP_HOSTNAME} \
+  "hadoop distcp gs://data-gpdb-ud-tpch/${SCALE}/lineitem_data/*.tbl /tmp/lineitem_read/" || exit 1
