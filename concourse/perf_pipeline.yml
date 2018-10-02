@@ -307,7 +307,6 @@ jobs:
             disk_size: {{perf-hadoop-disk-size}}
 
       - task: load_data
-        image: ccp-7
         config:
           platform: linux
           inputs:
@@ -323,6 +322,7 @@ jobs:
             PLATFORM: centos7
             CLOUD_PROVIDER: google
             SCALE: {{perf-scale}}
+        image: ccp-7
 
   - task: setup_pxf
     input_mapping:
