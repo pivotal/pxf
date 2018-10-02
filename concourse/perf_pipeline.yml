@@ -263,7 +263,7 @@ jobs:
           BUCKET_NAME: {{tf-bucket-name}}
           PLATFORM: centos7
           CLOUD_PROVIDER: google
-      - task: customize_greenplum
+      - task: customize_greenplum_init
         config:
           platform: linux
           inputs:
@@ -274,11 +274,13 @@ jobs:
           run:
             path: bash
             args:
-            - -c
-            - cp -R ccp_src ccp_custom_src
-            - cp pxf_src/concourse/scripts/gpdb/gpinitsystem_config ccp_custom_src/scripts/gpinitsystem_config
-            - sed -i '/run_gpinitsystem_inspec/d' ccp_custom_src/scripts/gpinitsystem.sh
-          image: ccp-7
+            - -exc
+            - |
+              set -x
+              cp -R ccp_src/* ccp_custom_src/
+              yes | cp -rf pxf_src/concourse/scripts/gpdb/gpinitsystem_config ccp_custom_src/scripts/gpinitsystem_config
+              sed -i '/run_gpinitsystem_inspec/d' ccp_custom_src/scripts/gpinitsystem.sh
+        image: ccp-7
       - task: intialize_greenplum
         input_mapping:
           ccp_src: ccp_custom_src
@@ -303,6 +305,23 @@ jobs:
             initialization_script: {{perf-hadoop-initialization-script}}
             initialization_script_timeout: {{perf-hadoop-initialization-script-timeout}}
             disk_size: {{perf-hadoop-disk-size}}
+
+      - task: load_data
+        image: ccp-7
+        config:
+          platform: linux
+          inputs:
+          - name: pxf_src
+          run:
+            path: pxf_src/concourse/scripts/load_data.bash
+        params:
+          GOOGLE_CREDENTIALS: {{google-service-account-key}}
+          GOOGLE_PROJECT_ID: {{google-project-id}}
+          GOOGLE_ZONE: {{google-zone}}
+          GOOGLE_SERVICE_ACCOUNT: {{google-service-account}}
+          PLATFORM: centos7
+          CLOUD_PROVIDER: google
+          SCALE: {{perf-scale}}
 
   - task: setup_pxf
     input_mapping:

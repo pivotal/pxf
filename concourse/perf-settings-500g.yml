@@ -11,11 +11,11 @@ perf-gpdb-number-of-nodes: 21
 perf-gpdb-segments-per-host: 8
 perf-gpdb-instance-type: n1-standard-8
 
-perf-hadoop-number-of-nodes: 25
-perf-hadoop-initialization-script: gs://pxf-perf/scripts/load-lineitem-dataset-500.sh
-perf-hadoop-initialization-script-timeout: 5000
-perf-hadoop-instance-type: n1-standard-4
-perf-hadoop-disk-size: 100
+perf-hadoop-number-of-nodes: 30
+perf-hadoop-initialization-script: gs://pxf-perf/scripts/update-site-core.sh
+perf-hadoop-initialization-script-timeout: 5400
+perf-hadoop-instance-type: n1-standard-2
+perf-hadoop-disk-size: 64
 
 perf-trigger-interval: 720h
 perf-trigger-start: 12:30 PM
