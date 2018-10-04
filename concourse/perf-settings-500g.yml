@@ -7,9 +7,9 @@ enable-impersonation-multinode: true
 pxf-jvm-opts: "-Xmx512m -Xms512m"
 perf-ccp-reap-minutes: 1440
 
-perf-gpdb-number-of-nodes: 21
+perf-gpdb-number-of-nodes: 16
 perf-gpdb-segments-per-host: 8
-perf-gpdb-instance-type: n1-standard-8
+perf-gpdb-instance-type: n1-highmem-8
 
 perf-hadoop-number-of-nodes: 30
 perf-hadoop-initialization-script: gs://pxf-perf/scripts/update-site-core.sh
