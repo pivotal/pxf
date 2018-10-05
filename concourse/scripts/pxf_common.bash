@@ -2,6 +2,7 @@
 
 GPHOME="/usr/local/greenplum-db-devel"
 PXF_HOME="${GPHOME}/pxf"
+JAVA_HOME=$(ls -d /usr/lib/jvm/java-1.8.0-openjdk* | head -1)
 
 if [ -d gpAux/extensions/pxf ]; then
 	PXF_EXTENSIONS_DIR=gpAux/extensions/pxf
@@ -37,7 +38,7 @@ function run_regression_test() {
 }
 
 function install_gpdb_binary() {
-    service sshd start
+    **service sshd start
     mkdir -p ${GPHOME}
     tar -xzf bin_gpdb/bin_gpdb.tar.gz -C ${GPHOME}
     if [ -d pxf_tarball ]; then
@@ -45,7 +46,7 @@ function install_gpdb_binary() {
     fi
 	# Copy PSI package from system python to GPDB as automation test requires it
     if [ ! -d ${GPHOME}/lib/python/psi ]; then
-        psi_dir=$(find /usr/lib64 -name psi | sort -r | head -1)
+    **    psi_dir=$(find /usr/lib64 -name psi | sort -r | head -1)
         cp -r ${psi_dir} ${GPHOME}/lib/python
     fi
 }
@@ -108,12 +109,12 @@ function setup_gpadmin_user() {
     echo -e "gpadmin soft core unlimited" >> /etc/security/limits.d/gpadmin-limits.conf
     echo -e "gpadmin soft nproc 131072" >> /etc/security/limits.d/gpadmin-limits.conf
     echo -e "gpadmin soft nofile 65536" >> /etc/security/limits.d/gpadmin-limits.conf
-    echo -e "export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk.x86_64" >> /home/gpadmin/.bashrc
+    #echo -e "export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk.x86_64" >> /home/gpadmin/.bashrc
+    #/usr/lib/jvm/java-8-openjdk-amd64
+    #/usr/lib/jvm/java-1.8.0-openjdk-amd64
     if [ -d gpdb_src/gpAux/gpdemo ]; then
         chown -R gpadmin:gpadmin gpdb_src/gpAux/gpdemo
     fi
-    ln -s ${PWD}/gpdb_src /home/gpadmin/gpdb_src
-    ln -s ${PWD}/pxf_src /home/gpadmin/pxf_src
 }
 
 function install_pxf_client() {
