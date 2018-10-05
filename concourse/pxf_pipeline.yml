@@ -188,6 +188,7 @@ jobs:
       GROUP: gpdb,proxy
       TEST_ENV: {{test-env}}
       HADOOP_CLIENT: HDP
+      TEST_OS: centos
       TARGET_OS: centos
       TARGET_OS_VERSION: 6
 
@@ -215,6 +216,7 @@ jobs:
       GROUP: gpdb,proxy
       TEST_ENV: {{test-env}}
       HADOOP_CLIENT: HDP
+      TEST_OS: ubuntu
       TARGET_OS: ubuntu
       TARGET_OS_VERSION: 16
 
@@ -359,6 +361,8 @@ jobs:
     params:
       IMPERSONATION: false
       TEST_ENV: {{test-env}}
+      TEST_OS: centos
+      TARGET_OS: centos
 
 - name: promote_pxf_artifact
   plan:
