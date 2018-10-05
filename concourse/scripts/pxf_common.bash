@@ -38,12 +38,16 @@ function run_regression_test() {
 }
 
 function install_gpdb_binary() {
+    mkdir -p ${GPHOME}
+
     if [ "${TARGET_OS}" == "centos" ]; then
       service sshd start
+      tar -xzf bin_gpdb/bin_gpdb.tar.gz -C ${GPHOME}
+    elif [ "${TARGET_OS}" == "ubuntu" ]; then
+      service ssh start
+      tar -xzf bin_gpdb/compiled_bits_ubuntu16.tar.gz -C ${GPHOME}
     fi
 
-    mkdir -p ${GPHOME}
-    tar -xzf bin_gpdb/bin_gpdb.tar.gz -C ${GPHOME}
     if [ -d pxf_tarball ]; then
         tar -xzf pxf_tarball/pxf.tar.gz -C ${GPHOME}
     fi
