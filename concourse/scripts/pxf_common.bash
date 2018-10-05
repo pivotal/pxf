@@ -38,7 +38,10 @@ function run_regression_test() {
 }
 
 function install_gpdb_binary() {
-    **service sshd start
+    if [ "${TARGET_OS}" == "centos" ]; then
+      service sshd start
+    fi
+
     mkdir -p ${GPHOME}
     tar -xzf bin_gpdb/bin_gpdb.tar.gz -C ${GPHOME}
     if [ -d pxf_tarball ]; then
@@ -46,7 +49,7 @@ function install_gpdb_binary() {
     fi
 	# Copy PSI package from system python to GPDB as automation test requires it
     if [ ! -d ${GPHOME}/lib/python/psi ]; then
-    **    psi_dir=$(find /usr/lib64 -name psi | sort -r | head -1)
+        psi_dir=$(find /usr/lib64 -name psi | sort -r | head -1)
         cp -r ${psi_dir} ${GPHOME}/lib/python
     fi
 }

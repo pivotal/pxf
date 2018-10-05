@@ -73,6 +73,12 @@ resources:
     repository: pivotaldata/gpdb-pxf-dev
     tag: centos6-hdp-server
 
+- name: gpdb-pxf-dev-ubuntu16-hdp-server
+  type: docker-image
+  source:
+    repository: pivotaldata/gpdb-pxf-dev
+    tag: ubuntu16-hdp-server
+
 - name: gpdb-pxf-dev-centos6-hdp-secure
   type: docker-image
   source:
@@ -93,6 +99,16 @@ resources:
     region_name: {{aws-region}}
     secret_access_key: {{bucket-secret-access-key}}
     versioned_file: bin_gpdb_centos6/gpdb_branch_((gpdb-branch))/icw_green/bin_gpdb.tar.gz
+
+- name: bin_gpdb_ubuntu16
+  type: s3
+  source:
+    access_key_id: {{bucket-access-key-id}}
+    # use the most recent compiled bits, for now, before updating icw_green
+    bucket: {{bucket-name}}
+    region_name: {{aws-region}}
+    secret_access_key: {{bucket-secret-access-key}}
+    versioned_file: compiled_bits_ubuntu16/compiled_bits_ubuntu16.tar.gz
 
 - name: pxf_tarball
   type: s3
@@ -148,7 +164,7 @@ jobs:
     params:
       file: pxf_artifacts/pxf.tar.gz
 
-- name: test_pxf_hdp
+- name: test_pxf_hdp_centos6
   plan:
   - aggregate:
     - get: gpdb_src
@@ -174,6 +190,33 @@ jobs:
       HADOOP_CLIENT: HDP
       TARGET_OS: centos
       TARGET_OS_VERSION: 6
+
+- name: test_pxf_hdp_ubuntu16
+  plan:
+  - aggregate:
+    - get: gpdb_src
+      passed:
+      - compile_pxf
+    - get: bin_gpdb
+      resource: bin_gpdb_ubuntu16
+    - get: pxf_src
+      passed:
+      - compile_pxf
+      trigger: true
+    - get: pxf_tarball
+      passed:
+      - compile_pxf
+      trigger: true
+    - get: gpdb-pxf-dev-ubuntu16-hdp-server
+  - task: test_pxf
+    file: pxf_src/concourse/tasks/test_pxf.yml
+    image: gpdb-pxf-dev-ubuntu16-hdp-server
+    params:
+      GROUP: gpdb,proxy
+      TEST_ENV: {{test-env}}
+      HADOOP_CLIENT: HDP
+      TARGET_OS: ubuntu
+      TARGET_OS_VERSION: 16
 
 - name: test_pxf_hdp_secure
   plan:
@@ -321,7 +364,7 @@ jobs:
   plan:
   - get: pxf_tarball
     passed:
-    - test_pxf_hdp
+    - test_pxf_hdp_centos6
     - test_pxf_cdh
     - test_pxf_hdp_secure
     - test_pxf_no_impersonation
