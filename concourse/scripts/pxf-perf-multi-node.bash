@@ -120,21 +120,22 @@ function validate_write_to_gpdb {
     local gpdb_values
     external=${1}
     internal=${2}
-    external_values=$(psql -t -c "SELECT ${VALIDATION_QUERY} FROM ${external}")
-    gpdb_values=$(psql -t -c "SELECT ${VALIDATION_QUERY} FROM ${internal}")
 
-    cat << EOF
-
-Results from external query
-------------------------------
-EOF
-    echo ${external_values}
+    gpdb_values=$(psql -t -c "SET gp_vmem_protect_limit TO '16384';SELECT ${VALIDATION_QUERY} FROM ${internal}")
     cat << EOF
 
 Results from GPDB query
 ------------------------------
 EOF
     echo ${gpdb_values}
+
+    external_values=$(psql -t -c "SET gp_vmem_protect_limit TO '16384';SELECT ${VALIDATION_QUERY} FROM ${external}")
+    cat << EOF
+
+Results from external query
+------------------------------
+EOF
+    echo ${external_values}
 
     if [ "${external_values}" != "${gpdb_values}" ]; then
         echo ERROR! Unable to validate data written from external to GPDB
