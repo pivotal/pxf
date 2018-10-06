@@ -13,12 +13,9 @@ LINEITEM_COUNT="unset"
 source "${CWDIR}/pxf_common.bash"
 
 function create_database_and_schema {
-    # Prevent GPDB from erroring out with VMEM protection error
-    gpconfig -c gp_vmem_protect_limit -v '16384'
-    gpstop -u
-    sleep 10
     # Create DB
     psql -d postgres <<-EOF
+    DROP DATABASE IF EXISTS tpch;
     CREATE DATABASE tpch;
     \c tpch;
     CREATE TABLE lineitem (
@@ -40,6 +37,12 @@ function create_database_and_schema {
         l_comment VARCHAR(44) NOT NULL
     ) DISTRIBUTED BY (l_partkey);
 EOF
+
+    # Prevent GPDB from erroring out with VMEM protection error
+    gpconfig -c gp_vmem_protect_limit -v '16384'
+    gpstop -u
+    sleep 10
+
     psql -c "CREATE EXTERNAL TABLE lineitem_external (like lineitem) LOCATION ('pxf://tmp/lineitem_read/?PROFILE=HdfsTextSimple') FORMAT 'CSV' (DELIMITER '|')"
     if [ "${BENCHMARK_S3}" == "true" ]; then
         psql -c "CREATE OR REPLACE FUNCTION write_to_s3() RETURNS integer AS '\$libdir/gps3ext.so', 's3_export' LANGUAGE C STABLE"
