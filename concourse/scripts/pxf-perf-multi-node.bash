@@ -13,8 +13,12 @@ LINEITEM_COUNT="unset"
 source "${CWDIR}/pxf_common.bash"
 
 function create_database_and_schema {
+    # Prevent GPDB from erroring out with VMEM protection error
+    gpconfig -c gp_vmem_protect_limit -v '16384'
+    gpstop -u
+    sleep 10
+    # Create DB
     psql -d postgres <<-EOF
-    DROP DATABASE IF EXISTS tpch;
     CREATE DATABASE tpch;
     \c tpch;
     CREATE TABLE lineitem (
@@ -121,7 +125,7 @@ function validate_write_to_gpdb {
     external=${1}
     internal=${2}
 
-    gpdb_values=$(psql -t -c "SET gp_vmem_protect_limit TO '16384';SELECT ${VALIDATION_QUERY} FROM ${internal}")
+    gpdb_values=$(psql -t -c "SELECT ${VALIDATION_QUERY} FROM ${internal}")
     cat << EOF
 
 Results from GPDB query
@@ -129,7 +133,7 @@ Results from GPDB query
 EOF
     echo ${gpdb_values}
 
-    external_values=$(psql -t -c "SET gp_vmem_protect_limit TO '16384';SELECT ${VALIDATION_QUERY} FROM ${external}")
+    external_values=$(psql -t -c "SELECT ${VALIDATION_QUERY} FROM ${external}")
     cat << EOF
 
 Results from external query
