@@ -40,7 +40,8 @@ EOF
 
     # Prevent GPDB from erroring out with VMEM protection error
     gpconfig -c gp_vmem_protect_limit -v '16384'
-    gpstop -u
+    gpssh -u gpadmin -h mdw -v -s -e \
+        'source /usr/local/greenplum-db-devel/greenplum_path.sh && export MASTER_DATA_DIRECTORY=/data/gpdata/master/gpseg-1 && gpstop -u'
     sleep 10
 
     psql -c "CREATE EXTERNAL TABLE lineitem_external (like lineitem) LOCATION ('pxf://tmp/lineitem_read/?PROFILE=HdfsTextSimple') FORMAT 'CSV' (DELIMITER '|')"
