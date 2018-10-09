@@ -10,7 +10,7 @@ CWDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 HADOOP_HOSTNAME="ccp-$(cat terraform_dataproc/name)-m"
 scale=$(($SCALE + 0))
 
-if [ ${scale} -gt 50 ]; then
+if [ ${scale} -gt 10 ]; then
   VALIDATION_QUERY="SUM(l_partkey) AS PARTKEYSUM"
 else
   VALIDATION_QUERY="COUNT(*) AS Total, COUNT(DISTINCT l_orderkey) AS ORDERKEYS, SUM(l_partkey) AS PARTKEYSUM, COUNT(DISTINCT l_suppkey) AS SUPPKEYS, SUM(l_linenumber) AS LINENUMBERSUM"
