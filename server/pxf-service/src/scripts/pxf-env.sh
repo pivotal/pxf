@@ -45,13 +45,13 @@ export PXF_PORT=${PXF_PORT:=@pxfPortNum@}
 export PXF_JVM_OPTS=${PXF_JVM_OPTS:="-Xmx2g -Xms1g"}
 
 # Kerberos path to keytab file owned by pxf service with permissions 0400
-export PXF_KEYTAB="${PXF_HOME}/conf/pxf.service.keytab"
+export PXF_KEYTAB=${PXF_KEYTAB:="${PXF_HOME}/conf/pxf.service.keytab"}
 
 # Kerberos principal pxf service should use. _HOST is replaced automatically with hostnames FQDN
-export PXF_PRINCIPAL="gpadmin/_HOST@EXAMPLE.COM"
+export PXF_PRINCIPAL=${PXF_PRINCIPAL:="gpadmin/_HOST@EXAMPLE.COM"}
 
 # End-user identity impersonation, set to true to enable
-export PXF_USER_IMPERSONATION=@pxfDefaultUserImpersonation@
+export PXF_USER_IMPERSONATION=${PXF_USER_IMPERSONATION:=@pxfDefaultUserImpersonation@}
 
 # Set to true to enable Remote debug via port 8000
-export PXF_DEBUG=${PXF_DEBUG:-false}
+export PXF_DEBUG=${PXF_DEBUG:=false}
