@@ -102,16 +102,6 @@ resources:
     private_key: {{pxf-git-key}}
     uri: {{pxf-git-remote}}
 
-- name: pxf_build_number
-  type: semver
-  source:
-    initial_version: 3.3.0
-    bucket: {{pxf-aws-bucket-name}}
-    key: pxf_artifacts/pxf_build_number
-    region_name: {{aws-region}}
-    access_key_id: {{bucket-access-key-id}}
-    secret_access_key: {{bucket-secret-access-key}}
-
 - name: gpdb-pxf-dev-centos6
   type: docker-image
   source:
@@ -180,8 +170,6 @@ jobs:
     trigger: true
   - aggregate:
     - get: gpdb_src
-    - put: pxf_build_number
-      params: {pre: rc}
     - get: pxf_src
     - get: gpdb-pxf-dev-centos6
   - task: compile_pxf
