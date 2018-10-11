@@ -115,6 +115,9 @@ public class WritableResource extends RestResource{
         }
 
         ProtocolData protData = new ProtocolData(params);
+        if(path.contains("://")) {
+            path = path.replaceFirst("/hdfs:", "");
+        }
         protData.setDataSource(path);
         Bridge bridge = new WriteBridge(protData);
 

@@ -63,12 +63,17 @@ public abstract class HdfsSplittableDataAccessor extends Plugin implements
         // 1. Load Hadoop configuration defined in $HADOOP_HOME/conf/*.xml files
         conf = new Configuration();
 
+        // TODO: Temp change to work with s3a
+        conf.set("fs.s3a.access.key", "FIXME");
+        conf.set("fs.s3a.secret.key", "FIXME");
+        conf.set("fs.s3a.fast.upload", "true");
+
         // 2. variable required for the splits iteration logic
         jobConf = new JobConf(conf, HdfsSplittableDataAccessor.class);
 
         // Check if the underlying configuration is for HDFS
         String defaultFS = conf.get("fs.defaultFS");
-        isDFS = (defaultFS != null) && defaultFS.startsWith("hdfs://");
+        isDFS = false; //(defaultFS != null) && defaultFS.startsWith("hdfs://");
     }
 
     /**

@@ -55,7 +55,12 @@ public class HdfsDataFragmenter extends Fragmenter {
     public HdfsDataFragmenter(InputData md) {
         super(md);
 
-        jobConf = new JobConf(new Configuration(), HdfsDataFragmenter.class);
+        // TODO: Temp change to work with s3a
+        Configuration conf = new Configuration();
+        conf.set("fs.s3a.access.key", "FIXME");
+        conf.set("fs.s3a.secret.key", "FIXME");
+        conf.set("fs.s3a.fast.upload", "true");
+        jobConf = new JobConf(conf, HdfsDataFragmenter.class);
     }
 
     /**
@@ -65,13 +70,20 @@ public class HdfsDataFragmenter extends Fragmenter {
      */
     @Override
     public List<Fragment> getFragments() throws Exception {
-        String absoluteDataPath = HdfsUtilities.absoluteDataPath(inputData.getDataSource());
-        List<InputSplit> splits = getSplits(new Path(absoluteDataPath));
+        Path path;
+        if(inputData.getDataSource().contains("://")) {
+            path = new Path(inputData.getDataSource());
+        } else {
+            path = new Path(HdfsUtilities.absoluteDataPath(inputData.getDataSource()));
+        }
+        //List<InputSplit> splits = getSplits(new Path(absoluteDataPath));
+        List<InputSplit> splits = getSplits(path);
 
         for (InputSplit split : splits) {
             FileSplit fsp = (FileSplit) split;
 
-            String filepath = fsp.getPath().toUri().getPath();
+            //String filepath = fsp.getPath().toUri().getPath();
+            String filepath = fsp.getPath().toString();
             String[] hosts = fsp.getLocations();
 
             /*
