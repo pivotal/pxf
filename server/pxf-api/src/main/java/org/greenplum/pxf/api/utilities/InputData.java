@@ -23,8 +23,10 @@ package org.greenplum.pxf.api.utilities;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 
 /**
@@ -119,6 +121,16 @@ public class InputData {
         this.remoteLogin = copy.remoteLogin;
         this.remoteSecret = copy.remoteSecret;
         this.threadSafe = copy.threadSafe;
+    }
+
+    /**
+     * Returns the stream of key-value pairs defined in the request parameters
+     *
+     * @returns stream of map entries
+     */
+    public Stream<Map.Entry<String, String>> getUserPropertiesStream() {
+        return requestParametersMap.entrySet().stream()
+                .filter(e -> e.getKey().startsWith(USER_PROP_PREFIX));
     }
 
     /**

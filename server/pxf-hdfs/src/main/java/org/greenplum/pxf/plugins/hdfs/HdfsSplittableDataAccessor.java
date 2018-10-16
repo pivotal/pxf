@@ -31,6 +31,7 @@ import org.apache.hadoop.mapred.*;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * Accessor for accessing a splittable HDFS data sources. HDFS will divide the
@@ -63,10 +64,13 @@ public abstract class HdfsSplittableDataAccessor extends Plugin implements
         // 1. Load Hadoop configuration defined in $HADOOP_HOME/conf/*.xml files
         conf = new Configuration();
 
-        // TODO: Temp change to work with s3a
-        conf.set("fs.s3a.access.key", "FIXME");
-        conf.set("fs.s3a.secret.key", "FIXME");
-        conf.set("fs.s3a.fast.upload", "true");
+        input.getUserPropertiesStream()
+                    .forEach(entry -> conf.set(entry.getKey(), entry.getValue()));
+////        for(Map.E)
+//        // TODO: Temp change to work with s3a
+//        conf.set("fs.s3a.access.key", "FIXME");
+//        conf.set("fs.s3a.secret.key", "FIXME");
+//        conf.set("fs.s3a.fast.upload", "true");
 
         // 2. variable required for the splits iteration logic
         jobConf = new JobConf(conf, HdfsSplittableDataAccessor.class);

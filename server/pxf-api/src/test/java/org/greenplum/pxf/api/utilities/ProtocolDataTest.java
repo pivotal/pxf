@@ -129,6 +129,20 @@ public class ProtocolDataTest {
     }
 
     @Test
+    public void profileStartingWithS3SetsTheUrlScheme() throws Exception {
+        parameters.put("X-GP-OPTIONS-PROFILE", "S3Text");
+        ProtocolData protocolData = new ProtocolData(parameters);
+        assertEquals("s3://i'm/ready/to/go", protocolData.dataSource);
+    }
+
+    @Test
+    public void profileStartingWithADLSetsTheUrlScheme() throws Exception {
+        parameters.put("X-GP-OPTIONS-PROFILE", "ADLParquet");
+        ProtocolData protocolData = new ProtocolData(parameters);
+        assertEquals("adl://i'm/ready/to/go", protocolData.dataSource);
+    }
+
+    @Test
     public void threadSafeTrue() throws Exception {
         parameters.put("X-GP-OPTIONS-THREAD-SAFE", "TRUE");
         ProtocolData protocolData = new ProtocolData(parameters);

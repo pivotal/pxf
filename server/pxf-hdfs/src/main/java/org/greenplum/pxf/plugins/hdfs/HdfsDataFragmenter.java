@@ -57,9 +57,12 @@ public class HdfsDataFragmenter extends Fragmenter {
 
         // TODO: Temp change to work with s3a
         Configuration conf = new Configuration();
-        conf.set("fs.s3a.access.key", "FIXME");
-        conf.set("fs.s3a.secret.key", "FIXME");
-        conf.set("fs.s3a.fast.upload", "true");
+
+        md.getUserPropertiesStream()
+                .forEach(entry -> conf.set(entry.getKey(), entry.getValue()));
+//        conf.set("fs.s3a.access.key", "FIXME");
+//        conf.set("fs.s3a.secret.key", "FIXME");
+//        conf.set("fs.s3a.fast.upload", "true");
         jobConf = new JobConf(conf, HdfsDataFragmenter.class);
     }
 
