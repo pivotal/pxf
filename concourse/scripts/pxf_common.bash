@@ -40,7 +40,6 @@ function install_gpdb_binary() {
     mkdir -p ${GPHOME}
     tar -xzf bin_gpdb/bin_gpdb.tar.gz -C ${GPHOME}
     if [ -d pxf_tarball ]; then
-        rm -rf "${GPHOME}/pxf"
         tar -xzf pxf_tarball/pxf.tar.gz -C ${GPHOME}
     fi
 	# Copy PSI package from system python to GPDB as automation test requires it
@@ -127,11 +126,13 @@ function install_pxf_client() {
 }
 
 function install_pxf_server() {
-	export BUILD_NUMBER="${TARGET_OS}"
-	export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
-	pushd pxf_src/server
-	make install
-	popd
+	if [ "${TEST_ENV}" == "dev" ]; then
+		export BUILD_NUMBER="${TARGET_OS}"
+		export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
+		pushd pxf_src/server
+		make install
+		popd
+	fi
 }
 
 function setup_impersonation() {
