@@ -1,12 +1,22 @@
 #!/bin/bash -l
 
+function assert_variable_is_set() {
+    local VAR_NAME="$1"
+    if [ -z "${!VAR_NAME}" ]; then
+        echo "${VAR_NAME} must be set as a param in the task yml"
+        exit 1
+    fi
+}
+
+assert_variable_is_set 'TARGET_OS'
+
 if [ "${TARGET_OS}" == "ubuntu" ]; then
     GPHOME="/usr/local/gpdb"
 else
     GPHOME="/usr/local/greenplum-db-devel"
 fi
 
-PXF_HOME="${GPHOME}/pxf"
+export PXF_HOME="${GPHOME}/pxf"
 
 JAVA_HOME=$(ls -d /usr/lib/jvm/java-1.8.0-openjdk* | head -1)
 

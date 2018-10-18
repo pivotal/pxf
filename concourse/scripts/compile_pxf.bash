@@ -2,16 +2,17 @@
 
 set -eox pipefail
 
-if [ -z "$OUTPUT_ARTIFACT_DIR" ]; then echo 'OUTPUT_ARTIFACT_DIR must be set as a param in the task yml'; exit 1; fi
-if [ -z "$TARGET_OS" ];           then echo 'TARGET_OS must be set as a param in the task yml'; exit 1; fi
+CWDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${CWDIR}/pxf_common.bash"
 
-GPHOME="/usr/local/greenplum-db-devel"
+assert_variable_is_set 'OUTPUT_ARTIFACT_DIR'
+assert_variable_is_set 'TARGET_OS'
+
 export PXF_ARTIFACTS_DIR="$(pwd)/${OUTPUT_ARTIFACT_DIR}"
 
 _main() {
 	export TERM=xterm
 	export BUILD_NUMBER="${TARGET_OS}"
-	export PXF_HOME="${GPHOME}/pxf"
 	export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
 	pushd pxf_src/server
 		make install
