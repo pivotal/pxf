@@ -8,9 +8,11 @@ source "${CWDIR}/pxf_common.bash"
 SSH_OPTS="-i cluster_env_files/private_key.pem"
 
 function setup_pxf {
-
     local segment=${1}
     local hadoop_ip=${2}
+    assert_exists cluster_env_files/etc_hostfile
+    assert_exists pxf_tarball/pxf.tar.gz
+
     scp -r ${SSH_OPTS} pxf_tarball centos@${segment}:
     scp ${SSH_OPTS} cluster_env_files/etc_hostfile centos@${segment}:
 

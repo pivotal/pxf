@@ -5,8 +5,8 @@ set -eox pipefail
 CWDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${CWDIR}/pxf_common.bash"
 
-assert_variable_is_set 'OUTPUT_ARTIFACT_DIR'
-assert_variable_is_set 'TARGET_OS'
+assert_ci_param 'OUTPUT_ARTIFACT_DIR'
+assert_ci_param 'TARGET_OS'
 
 export PXF_ARTIFACTS_DIR="$(pwd)/${OUTPUT_ARTIFACT_DIR}"
 

@@ -1,14 +1,22 @@
 #!/bin/bash -l
 
-function assert_variable_is_set() {
+function assert_ci_param() {
     local VAR_NAME="$1"
     if [ -z "${!VAR_NAME}" ]; then
-        echo "${VAR_NAME} must be set as a param in the task yml"
+        echo "ERROR: ${VAR_NAME} must be set as a param in the task yml"
         exit 1
     fi
 }
 
-assert_variable_is_set 'TARGET_OS'
+function assert_exists() {
+    local FILE="$1"
+    if ! [ -e "${FILE}" ]; then
+        echo "ERROR: File or dir ${FILE} does not exist"
+        exit 1
+    fi
+}
+
+assert_ci_param 'TARGET_OS'
 
 if [ "${TARGET_OS}" == "ubuntu" ]; then
     GPHOME="/usr/local/gpdb"
@@ -153,6 +161,7 @@ function install_pxf_client() {
 }
 
 function install_pxf_server() {
+    # Relies on the working directory being /tmp/build/<sha>/
     if [ ! -d ${PXF_HOME} ]; then
         if [ -d pxf_tarball ]; then
             tar -xzf pxf_tarball/pxf.tar.gz -C ${GPHOME}
@@ -169,6 +178,7 @@ function install_pxf_server() {
 
 function setup_impersonation() {
     local GPHD_ROOT=${1}
+    assert_ci_param 'IMPERSONATION'
 
 	# enable impersonation by gpadmin user
     if [ "${IMPERSONATION}" == "true" ]; then
@@ -223,6 +233,7 @@ EOF
 
 function start_hadoop_services() {
     local GPHD_ROOT=${1}
+    assert_ci_param 'IMPERSONATION'
 
     # Start all hadoop services
     ${GPHD_ROOT}/bin/init-gphd.sh
