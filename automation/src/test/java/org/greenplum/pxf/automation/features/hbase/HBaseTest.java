@@ -153,7 +153,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features", "sanity" })
+    @Test(groups = { "features", "sanity", "gpdb" })
     public void sanity() throws Exception {
 
         verifyFilterResults(hbaseTable, exTable, "", NO_FILTER,
@@ -165,7 +165,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void lowerFilter() throws Exception {
 
         String whereClause = " WHERE \"cf1:q3\" < '00000030'";
@@ -178,7 +178,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void rangeFilter() throws Exception {
 
         String whereClause = " WHERE \"cf1:q3\" > '00000090' AND \"cf1:q3\" <= '00000103'";
@@ -191,7 +191,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void specificRowFilter() throws Exception {
 
         String whereClause = " WHERE \"cf1:q3\" = 4";
@@ -204,7 +204,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void notEqualsFilter() throws Exception {
 
         String whereClause = " WHERE \"cf1:q3\" != 30";
@@ -217,7 +217,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void rowkeyEqualsFilter() throws Exception {
 
         String whereClause = " WHERE recordkey = '00000090'";
@@ -230,7 +230,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void rowkeyRangeFilter() throws Exception {
 
         String whereClause = " WHERE recordkey > '00000090' AND recordkey <= '00000103'";
@@ -243,7 +243,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void multipleQualifiersPushdownFilter() throws Exception {
 
         String whereClause = " WHERE recordkey != '00000002' AND \"cf1:q3\" > 6  AND \"cf1:q8\" < 10 AND \"cf1:q9\" > 0";
@@ -258,7 +258,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void partialFilterPushdown() throws Exception {
 
         String whereClause = " WHERE \"cf1:q3\" > 6  AND \"cf1:q7\" = '42'";
@@ -273,7 +273,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void textFilter() throws Exception {
 
         String whereClause = " WHERE \"cf1:q2\" = 'UTF8_計算機用語_00000024'";
@@ -286,7 +286,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void doubleFilter() throws Exception {
 
         String whereClause = " WHERE \"cf1:q5\" > 91.92 AND \"cf1:q6\" <= 99999999.99";
@@ -300,7 +300,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void orFilter() throws Exception {
 
         String whereClause = " WHERE \"cf1:q3\" < 10 OR \"cf1:q5\" > 90";
@@ -317,7 +317,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void mixedFilterPushdownOrAnd() throws Exception {
 
         String whereClause = " WHERE (\"cf1:q3\" < 10 OR \"cf1:q5\" > 90) AND (\"cf1:q3\" > 5 AND \"cf1:q8\" < 30)";
@@ -338,7 +338,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void isNullFilter() throws Exception {
 
         String whereClause = " WHERE \"cf1:q3\" is null";
@@ -428,7 +428,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void recordkeyAsInteger() throws Exception {
 
         // create external table with record key as INTEGER
@@ -610,7 +610,7 @@ public class HBaseTest extends BaseFeature {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void emptyHBaseTable() throws Exception {
 
         HBaseTable emptyTable = new HBaseTable("empty_table", new String[] { "cf1" });

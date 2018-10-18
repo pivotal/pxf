@@ -163,7 +163,7 @@ function setup_impersonation() {
 	# enable impersonation by gpadmin user
     if [ "${IMPERSONATION}" == "true" ]; then
          echo 'Impersonation is enabled, adding support for gpadmin proxy user'
-         cat > proxy-config.xml <<-EOF
+         cat > proxy-config.xml <<EOF
          <property>
              <name>hadoop.proxyuser.gpadmin.hosts</name>
              <value>*</value>

@@ -373,7 +373,7 @@ public class HiveTest extends HiveBaseTest {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void columnDataTypeMisMatch() throws Exception {
 
         /* Here t1 column data type is passed as integer where as expected as
@@ -408,7 +408,7 @@ public class HiveTest extends HiveBaseTest {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features" })
+    @Test(groups = { "features", "gpdb" })
     public void columnCountMisMatch() throws Exception {
 
         // In pxf table creation a dummy extra column is added so that columns
@@ -680,7 +680,7 @@ public class HiveTest extends HiveBaseTest {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features", "hcatalog" })
+    @Test(groups = { "features", "hcatalog", "gpdb" })
     public void hivePartitionedClusteredTable() throws Exception {
 
         preparePartitionedClusteredData();
@@ -696,7 +696,7 @@ public class HiveTest extends HiveBaseTest {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features", "hcatalog" })
+    @Test(groups = { "features", "hcatalog", "gpdb" })
     public void hivePartitionedClusteredSortedTable() throws Exception {
 
         preparePartitionedClusteredSortedData();
@@ -713,7 +713,7 @@ public class HiveTest extends HiveBaseTest {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups  = { "features", "hcatalog" })
+    @Test(groups  = { "features", "hcatalog", "gpdb" })
     public void hivePartitionedSkewedTable() throws Exception {
 
         prepareSkewedData();
@@ -728,7 +728,7 @@ public class HiveTest extends HiveBaseTest {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups  = { "features", "hcatalog" })
+    @Test(groups  = { "features", "hcatalog", "gpdb" })
     public void hivePartitionedSkewedStoredAsDirsTable() throws Exception {
 
         prepareSkewedStoredAsDirsData();
@@ -823,7 +823,7 @@ public class HiveTest extends HiveBaseTest {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups  = { "features", "hcatalog" })
+    @Test(groups  = { "features", "hcatalog", "gpdb" })
     public void hiveHeterogenTableOptimizedProfile() throws Exception {
 
         // Create Hive table with partitions, when each partition has different data

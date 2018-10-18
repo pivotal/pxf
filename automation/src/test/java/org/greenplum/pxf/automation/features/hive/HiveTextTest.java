@@ -409,7 +409,7 @@ public class HiveTextTest extends HiveBaseTest {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features", "hcatalog" })
+    @Test(groups = { "features", "hcatalog", "gpdb" })
     public void hiveTextTableCustomDelimiter() throws Exception {
 
         //hive text table with custom delimiter
@@ -429,7 +429,7 @@ public class HiveTextTest extends HiveBaseTest {
      *
      * @throws Exception if test fails to run
      */
-    @Test(groups = { "features", "hcatalog" })
+    @Test(groups = { "features", "hcatalog", "gpdb" })
     public void hiveTextTableOptimizedProfile() throws Exception {
 
         runTincTest("pxf.features.hcatalog.heterogeneous_table_three_text_partitions.runTest");
