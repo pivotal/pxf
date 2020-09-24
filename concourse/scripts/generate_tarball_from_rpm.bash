@@ -14,23 +14,16 @@ function fail() {
 [[ -d pxf_artifacts ]] || fail "pxf_artifacts directory not found"
 
 # check if the RPM for GP version and TARGET_OS_VERSION is available
-rpm_file_name=$(find pxf_artifacts -type f -name "pxf-gp${GP_VER}-*-2.el${TARGET_OS_VERSION}.x86_64.rpm")
+rpm_file_name=$(find pxf_artifacts/licensed -type f -name "pxf-gp${GP_VER}-*-2.el${TARGET_OS_VERSION}.x86_64.rpm")
 [[ -f ${rpm_file_name} ]] || fail "pxf_artifacts/licensed/pxf-gp${GP_VER}-*-2.el${TARGET_OS_VERSION}.x86_64.rpm not found"
 
-# attempt to determine the PXF version
-if [[ ${rpm_file_name##*/} =~ pxf-gp${GP_VER}-([0-9.]+)-2[\.-](.*\.(deb|rpm)) ]]; then
-  pxf_version=${BASH_REMATCH[1]}
-  suffix=${BASH_REMATCH[2]}
-  echo "Determined PXF version number to be '${pxf_version}' with suffix '${suffix}'..."
-else
-  echo "Couldn't determine version number from file named '${rpm_file_name}'..."
-  exit 1
-fi
-
-# install the new RPM, check that the OSL file is present
+# install the new RPM
 rpm -ivh "$rpm_file_name"
 echo "listing installed directory /usr/local/pxf-gp${GP_VER}:"
 ls -al "/usr/local/pxf-gp${GP_VER}"
+
+# determine the PXF version
+pxf_version=$(cat "/usr/local/pxf-gp${GP_VER}/version")
 
 # copy installed PXF into a staging directory
 mkdir -p /tmp/pxf_tarball_repackage
@@ -53,8 +46,9 @@ tar -czf /tmp/pxf_tarball/pxf.tar.gz -C /tmp/pxf_tarball_repackage .
 cat > /tmp/pxf_tarball/install_gpdb_component <<EOF
 #!/bin/bash
 set -x
+CWDIR="\$( cd "\$( dirname "\${BASH_SOURCE[0]}" )" && pwd )"
 : "\${GPHOME:?GPHOME must be set}"
-tar xvzf pxf.tar.gz -C \$GPHOME
+tar xvzf "\${CWDIR}/pxf.tar.gz" -C \$GPHOME
 EOF
 chmod +x /tmp/pxf_tarball/install_gpdb_component
 

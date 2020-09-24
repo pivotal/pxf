@@ -301,7 +301,7 @@ resources:
     json_key: ((concourse-gcs-resources-service-account-key))
     regexp: ((pxf-releng-odp-drop-path))/((pxf-odp-file-prefix))-(.*)-ODP.tar.gz
 
-## ---------- RelEng Drop Artifacts for MS ----------
+## ---------- RelEng Drop Artifacts for tarballs ----------
 - name: pxf_gp5_tarball_release_to_releng
   type: gcs
   source:
