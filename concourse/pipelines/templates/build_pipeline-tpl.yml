@@ -1615,10 +1615,10 @@ jobs:
         file: pxf_artifacts/licensed/pxf-gp6-*-2-ubuntu18.04-amd64.deb
     - put: pxf_gp5_tarball_release_to_releng
       params:
-        file: pxf_artifacts/licensed/pxf-gp5-*.tar.gz
+        file: pxf_artifacts/licensed/gp5/pxf-*.tar.gz
     - put: pxf_gp6_tarball_release_to_releng
       params:
-        file: pxf_artifacts/licensed/pxf-gp6-*.tar.gz
+        file: pxf_artifacts/licensed/gp6/pxf-*.tar.gz
     - put: pxf_odp_to_releng
       params:
         file: pxf_artifacts/((pxf-odp-file-prefix))*.tar.gz

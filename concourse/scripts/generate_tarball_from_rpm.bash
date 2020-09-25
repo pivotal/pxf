@@ -18,7 +18,7 @@ rpm_file_name=$(find pxf_artifacts/licensed -type f -name "pxf-gp${GP_VER}-*-2.e
 [[ -f ${rpm_file_name} ]] || fail "pxf_artifacts/licensed/pxf-gp${GP_VER}-*-2.el${TARGET_OS_VERSION}.x86_64.rpm not found"
 
 # install the new RPM
-rpm -ivh "$rpm_file_name"
+rpm -iv "$rpm_file_name"
 echo "listing installed directory /usr/local/pxf-gp${GP_VER}:"
 ls -al "/usr/local/pxf-gp${GP_VER}"
 
@@ -52,5 +52,6 @@ tar xvzf "\${CWDIR}/pxf.tar.gz" -C \$GPHOME
 EOF
 chmod +x /tmp/pxf_tarball/install_gpdb_component
 
-echo "create the pxf installer tarball in pxf_artifacts/licensed/pxf-gp${GP_VER}-${pxf_version}.tar.gz"
-tar -czf "pxf_artifacts/licensed/pxf-gp${GP_VER}-${pxf_version}.tar.gz" -C /tmp/pxf_tarball .
+echo "create the pxf installer tarball in pxf_artifacts/licensed/gp${GP_VER}/pxf-${pxf_version}.tar.gz"
+mkdir -p "pxf_artifacts/licensed/gp${GP_VER}/"
+tar -czf "pxf_artifacts/licensed/gp${GP_VER}/pxf-${pxf_version}.tar.gz" -C /tmp/pxf_tarball .
