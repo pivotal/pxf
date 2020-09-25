@@ -17,8 +17,11 @@ function fail() {
 rpm_file_name=$(find pxf_artifacts/licensed -type f -name "pxf-gp${GP_VER}-*-2.el${TARGET_OS_VERSION}.x86_64.rpm")
 [[ -f ${rpm_file_name} ]] || fail "pxf_artifacts/licensed/pxf-gp${GP_VER}-*-2.el${TARGET_OS_VERSION}.x86_64.rpm not found"
 
-# install the new RPM
-rpm -iv "$rpm_file_name"
+# extract RPM
+build_dir=${PWD}
+pushd /
+rpm2cpio "${build_dir}/${rpm_file_name}" | cpio -idm
+popd
 echo "listing installed directory /usr/local/pxf-gp${GP_VER}:"
 ls -al "/usr/local/pxf-gp${GP_VER}"
 
