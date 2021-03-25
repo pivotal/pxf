@@ -1547,12 +1547,14 @@ jobs:
     params:
       GP_VER: 6
       TARGET_OS_VERSION: ubuntu18.04
-  - task: Generate PXF binary tarball from PXF-GP6 on RHEL7 RPM
+{% for gp_ver in range(5, 7) %}
+  - task: Generate PXF binary tarball from PXF-GP[[gp_ver]] on RHEL7 RPM
     file: pxf_src/concourse/tasks/generate_tarball_from_rpm.yml
     image: rpmrebuild-centos7-image
     params:
-      GP_VER: 6
+      GP_VER: [[gp_ver]]
       TARGET_OS_VERSION: 7
+{% endfor %}
   - task: Generate Releng Email
     image: google-cloud-sdk-slim-image
     file: pxf_src/concourse/tasks/generate_releng_email.yml
