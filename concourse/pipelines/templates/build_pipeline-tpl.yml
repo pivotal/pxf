@@ -253,35 +253,49 @@ resources:
   source:
     bucket: ((pxf-releng-gp5-drop-bucket))
     json_key: ((concourse-gcs-resources-service-account-key))
-    regexp: ((pxf-releng-gp5-drop-path))/pxf-gp5-(.*)-2.el7.x86_64.rpm
+    regexp: ((pxf-releng-drop-path))/gpdb5/pxf-gp5-(.*)-2.el7.x86_64.rpm
 
 - name: pxf_gp6_rhel7_release_to_releng
   type: gcs
   source:
     bucket: ((pxf-releng-gp6-drop-bucket))
     json_key: ((concourse-gcs-resources-service-account-key))
-    regexp: ((pxf-releng-gp6-drop-path))/pxf-gp6-(.*)-2.el7.x86_64.rpm
+    regexp: ((pxf-releng-drop-path))/gpdb6/pxf-gp6-(.*)-2.el7.x86_64.rpm
 
 - name: pxf_gp6_ubuntu18_release_to_releng
   type: gcs
   source:
     bucket: ((pxf-releng-gp6-drop-bucket))
     json_key: ((concourse-gcs-resources-service-account-key))
-    regexp: ((pxf-releng-gp6-drop-path))/pxf-gp6-(.*)-2-ubuntu18.04-amd64.deb
+    regexp: ((pxf-releng-drop-path))/gpdb6/pxf-gp6-(.*)-2-ubuntu18.04-amd64.deb
 
-- name: pxf_osl_to_releng
+- name: pxf_gp5_osl_to_releng
   type: gcs
   source:
     bucket: ((pxf-releng-osl-drop-bucket))
     json_key: ((concourse-gcs-resources-service-account-key))
-    regexp: ((pxf-releng-osl-drop-path))/((pxf-osl-file-prefix))_(.*)_GA.txt
+    regexp: ((pxf-releng-osl-drop-path))/gpdb5/((pxf-osl-file-prefix))_(.*)_GA.txt
 
-- name: pxf_odp_to_releng
+- name: pxf_gp5_odp_to_releng
   type: gcs
   source:
     bucket: ((pxf-releng-odp-drop-bucket))
     json_key: ((concourse-gcs-resources-service-account-key))
-    regexp: ((pxf-releng-odp-drop-path))/((pxf-odp-file-prefix))-(.*)-ODP.tar.gz
+    regexp: ((pxf-releng-odp-drop-path))/gpdb5/((pxf-odp-file-prefix))-(.*)-ODP.tar.gz
+
+- name: pxf_gp6_osl_to_releng
+  type: gcs
+  source:
+    bucket: ((pxf-releng-osl-drop-bucket))
+    json_key: ((concourse-gcs-resources-service-account-key))
+    regexp: ((pxf-releng-osl-drop-path))/gpdb6/((pxf-osl-file-prefix))_(.*)_GA.txt
+
+- name: pxf_gp6_odp_to_releng
+  type: gcs
+  source:
+    bucket: ((pxf-releng-odp-drop-bucket))
+    json_key: ((concourse-gcs-resources-service-account-key))
+    regexp: ((pxf-releng-osl-drop-path))/gpdb6/((pxf-odp-file-prefix))-(.*)-ODP.tar.gz
 
 ## ---------- RelEng Drop Artifacts for tarballs ----------
 - name: pxf_gp5_tarball_release_to_releng
@@ -289,14 +303,14 @@ resources:
   source:
     bucket: ((pxf-releng-gp6-drop-bucket))
     json_key: ((concourse-gcs-resources-service-account-key))
-    regexp: ((pxf-releng-gp5-drop-path))/pxf-(.*).tar.gz
+    regexp: ((pxf-releng-drop-path))/gpdb5/pxf-(.*).tar.gz
 
 - name: pxf_gp6_tarball_release_to_releng
   type: gcs
   source:
     bucket: ((pxf-releng-gp6-drop-bucket))
     json_key: ((concourse-gcs-resources-service-account-key))
-    regexp: ((pxf-releng-gp6-drop-path))/pxf-(.*).tar.gz
+    regexp: ((pxf-releng-drop-path))/gpdb6/pxf-(.*).tar.gz
 
 ## ---------- PXF ShipIt resources ----------
 - name: pxf_shipit_file
@@ -434,13 +448,13 @@ resources:
     json_key: ((concourse-gcs-resources-service-account-key))
     regexp: server/published/master/greenplum-db-(7.*)-rhel7-x86_64.rpm
 
-## ---------- PXF 5 Artifact ---------------
+## ---------- PXF 5 (for GPDB 6) Artifact ---------------
 - name: pxf5_gp6_rhel7_released
   type: gcs
   source:
     bucket: ((pxf-releng-gp6-drop-bucket))
     json_key: ((concourse-gcs-resources-service-account-key))
-    regexp: ((pxf-releng-gp6-drop-path))/pxf-gp6-5.(.*)-2.el7.x86_64.rpm
+    regexp: ((pxf-releng-drop-path))/gpdb6/pxf-gp6-5.(.*)-2.el7.x86_64.rpm
 
 ## ---------- PXF Build Artifacts ----------
 {% set gp_ver = None %}
@@ -1565,8 +1579,7 @@ jobs:
       BUILD_NAME: ${BUILD_NAME}
       PXF_OSL_FILE_PREFIX: ((pxf-osl-file-prefix))
       PXF_ODP_FILE_PREFIX: ((pxf-odp-file-prefix))
-      RELENG_GP5_DROP_URL: ((pxf-releng-gp5-drop-cloud))://((pxf-releng-gp5-drop-bucket))/((pxf-releng-gp5-drop-path))
-      RELENG_GP6_DROP_URL: ((pxf-releng-gp6-drop-cloud))://((pxf-releng-gp6-drop-bucket))/((pxf-releng-gp6-drop-path))
+      RELENG_DROP_URL: ((pxf-releng-gp5-drop-cloud))://((pxf-releng-gp5-drop-bucket))/((pxf-releng-drop-path))
       RELENG_OSL_DROP_URL: gs://((pxf-releng-osl-drop-bucket))/((pxf-releng-osl-drop-path))
       RELENG_ODP_DROP_URL: gs://((pxf-releng-odp-drop-bucket))/((pxf-releng-odp-drop-path))
   - in_parallel:
@@ -1585,10 +1598,16 @@ jobs:
     - put: pxf_gp6_tarball_release_to_releng
       params:
         file: pxf_artifacts/licensed/gp6/pxf-*.tar.gz
-    - put: pxf_odp_to_releng
+    - put: pxf_gp5_odp_to_releng
       params:
         file: pxf_artifacts/((pxf-odp-file-prefix))*.tar.gz
-    - put: pxf_osl_to_releng
+    - put: pxf_gp5_osl_to_releng
+      params:
+        file: pxf_artifacts/((pxf-osl-file-prefix))*.txt
+    - put: pxf_gp6_odp_to_releng
+      params:
+        file: pxf_artifacts/((pxf-odp-file-prefix))*.tar.gz
+    - put: pxf_gp6_osl_to_releng
       params:
         file: pxf_artifacts/((pxf-osl-file-prefix))*.txt
 {% if email_notification %}
