@@ -303,14 +303,14 @@ resources:
   source:
     bucket: ((pxf-releng-gp6-drop-bucket))
     json_key: ((concourse-gcs-resources-service-account-key))
-    regexp: ((pxf-releng-drop-path))/gpdb5/pxf-(.*).tar.gz
+    regexp: ((pxf-releng-drop-path))/gpdb5/pxf-gp5-(.*)-el7.x86_64.tar.gz
 
 - name: pxf_gp6_tarball_release_to_releng
   type: gcs
   source:
     bucket: ((pxf-releng-gp6-drop-bucket))
     json_key: ((concourse-gcs-resources-service-account-key))
-    regexp: ((pxf-releng-drop-path))/gpdb6/pxf-(.*).tar.gz
+    regexp: ((pxf-releng-drop-path))/gpdb6/pxf-gp6-(.*)-el7.x86_64.tar.gz
 
 ## ---------- PXF ShipIt resources ----------
 - name: pxf_shipit_file
@@ -1594,10 +1594,10 @@ jobs:
         file: pxf_artifacts/licensed/pxf-gp6-*-2-ubuntu18.04-amd64.deb
     - put: pxf_gp5_tarball_release_to_releng
       params:
-        file: pxf_artifacts/licensed/gp5/pxf-*.tar.gz
+        file: pxf_artifacts/licensed/gp5/pxf-gp5-*-el7.x86_64.tar.gz
     - put: pxf_gp6_tarball_release_to_releng
       params:
-        file: pxf_artifacts/licensed/gp6/pxf-*.tar.gz
+        file: pxf_artifacts/licensed/gp6/pxf-gp6-*-el7.x86_64.tar.gz
     - put: pxf_gp5_odp_to_releng
       params:
         file: pxf_artifacts/((pxf-odp-file-prefix))*.tar.gz
