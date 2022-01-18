@@ -68,6 +68,20 @@ command to build the image:
       .
     popd
 
+### Docker gpdb6-rhel8-test-pxf-image image
+
+Build this image for Greenplum 6 running on Rhel 8. Run the following
+command to build the image:
+
+    pushd ~/workspace/pxf/concourse/docker/pxf-dev-base/
+    docker build \
+      --build-arg=BASE_IMAGE=gcr.io/data-gpdb-private-images/gpdb6-rhel8-test:latest \
+      --build-arg=GINKGO_VERSION=${GINKGO_VERSION} \
+      --tag=gpdb6-rhel8-test-pxf \
+      -f ~/workspace/pxf/concourse/docker/pxf-dev-base/gpdb6/rhel8/Dockerfile \
+      .
+    popd
+
 ### Docker gpdb6-ubuntu18.04-test-pxf-image image
 
 Build this image for Greenplum 6 running on Ubuntu 18.04. Run the following
