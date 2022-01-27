@@ -9,7 +9,6 @@ source "${CWDIR}/pxf_common.bash"
 
 GPDB_PKG_DIR=gpdb_package
 GPDB_VERSION=$(<"${GPDB_PKG_DIR}/version")
-GPHOME=/usr/local/greenplum-db-${GPDB_VERSION}
 
 function install_gpdb() {
     local pkg_file
@@ -63,6 +62,9 @@ function package_pxf() {
 }
 
 install_gpdb
+# installation of GPDB from RPM/DEB doesn't insure that the installation location will match the version
+# given in the gpdb_package, so set the GPHOME after installation
+GPHOME=$(find /usr/local/ -name "greenplum-db-${GPDB_VERSION}*")
 inflate_dependencies
 compile_pxf
 package_pxf
