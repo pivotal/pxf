@@ -124,8 +124,8 @@ function install_gpdb_binary() {
 	fi
 
 	local gphome python_dir python_version=2.7 export_pythonpath='export PYTHONPATH=$PYTHONPATH'
-	if [[ ${TARGET_OS} == centos ]]; then
-		# We can't use service sshd restart as service is not installed on CentOS 7.
+	if [[ ${TARGET_OS} == centos ]] || [[ ${TARGET_OS} == rhel ]]; then
+		# We can't use service sshd restart as service is not installed on CentOS 7 or RHEL 8.
 		/usr/sbin/sshd &
 		# CentOS 6 uses python 2.6
 		if grep 'CentOS release 6' /etc/centos-release; then
@@ -156,11 +156,21 @@ function install_gpdb_package() {
 		echo "Installing ${pkg_file}..."
 		rpm --quiet -ivh "${pkg_file}" >/dev/null
 
-		# We can't use service sshd restart as service is not installed on CentOS 7.
+		# We can't use service sshd restart as service is not installed on CentOS 7 or RHEL 8.
 		/usr/sbin/sshd &
 		# CentOS 6 uses python 2.6
-		if grep 'CentOS release 6' /etc/centos-release; then
-			python_version=2.6
+		# RHEL 8 has an /etc/redhat-release
+		if [[ -f /etc/centos-release ]]; then
+        major_version=$(cat /etc/centos-release | tr -dc '0-9.'|cut -d \. -f1)
+        if [[ ${major_version} == 6 ]]; then
+          echo "Running CentOS 6"
+          python_version=2.6
+        else
+          echo "Running CentOS ${major_version}"
+        fi
+    elif [[ -f /etc/redhat-release ]]; then
+          major_version=$(cat /etc/redhat-release | tr -dc '0-9.'|cut -d \. -f1)
+      echo "Running RHEL ${major_version}"
 		fi
 		python_dir=python${python_version}/site-packages
 		export_pythonpath+=:/usr/lib/${python_dir}:/usr/lib64/${python_dir}
