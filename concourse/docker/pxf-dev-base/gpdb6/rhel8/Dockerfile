@@ -34,9 +34,6 @@ RUN curl -fsSL -o /tmp/apache-maven.tar.gz ${BASE_URL}/apache-maven-${MAVEN_VERS
     && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn \
     && /usr/bin/pip2 install paramiko --no-cache-dir
 
-# install the glibc-locale-source for Russian encoding
-RUN dnf install -y glibc-locale-source
-
 ### create user gpadmin since GPDB cannot run under root
 
 # create rsa key for the root user
@@ -63,11 +60,11 @@ RUN ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa \
     # configure gpadmin limits
     && echo >> /etc/security/limits.d/gpadmin-limits.conf 'gpadmin soft core unlimited' \
     && echo >> /etc/security/limits.d/gpadmin-limits.conf 'gpadmin soft nproc 131072' \
-    && echo >> /etc/security/limits.d/gpadmin-limits.conf 'gpadmin soft nofile 65536'
+    && echo >> /etc/security/limits.d/gpadmin-limits.conf 'gpadmin soft nofile 65536' \
     # add locale for testing
-RUN localedef -c -i ru_RU -f CP1251 ru_RU.CP1251
+    && localedef -c -i ru_RU -f CP1251 ru_RU.CP1251 \
     # create .pxfrc
-RUN echo >> ~gpadmin/.pxfrc 'export LANG=en_US.UTF-8' \
+    && echo >> ~gpadmin/.pxfrc 'export LANG=en_US.UTF-8' \
     && echo >> ~gpadmin/.pxfrc 'export PGPORT=5432' \
     && echo >> ~gpadmin/.pxfrc 'export GOPATH=/opt/go' \
     && echo >> ~gpadmin/.pxfrc 'export GPHOME=$(find /usr/local/ -name greenplum-db* -type d | head -n1)' \
